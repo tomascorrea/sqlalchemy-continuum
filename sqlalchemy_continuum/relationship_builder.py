@@ -9,6 +9,7 @@ from .utils import adapt_columns, version_class, option
 
 class RelationshipBuilder(object):
     def __init__(self, versioning_manager, model, property_):
+
         self.manager = versioning_manager
         self.property = property_
         self.model = model
@@ -334,7 +335,13 @@ class RelationshipBuilder(object):
         Builds reflected relationship between version classes based on given
         parent object's RelationshipProperty.
         """
+
+        # Do no create create relationship if the property is market as excluded
+        if self.property.key in self.model.__versioned__.get('exclude', {}):
+            return
+
         self.local_cls = version_class(self.model)
+
         self.versioned = False
         try:
             self.remote_cls = version_class(self.property.mapper.class_)
